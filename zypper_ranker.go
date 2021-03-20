@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	downloadAppName     = "nano"
 	tumbleweedUrlSuffix = "tumbleweed/repo/oss/"
 )
 
@@ -23,32 +24,32 @@ func main() {
 
 	zypperInit()
 
-	csv_mirror,_:=os.Open("./mirrors.csv")
+	csv_mirror, _ := os.Open("./mirrors.csv")
 	mirrorlists := csv.NewReader(csv_mirror)
 
-	for{
-		mirror, err :=  mirrorlists.Read()
+	for {
+		mirror, err := mirrorlists.Read()
 		// mirror[0] => name
 		//       [1] => url without "tumbleweed/repo/oss/"
-		if err == io.EOF{
+		if err == io.EOF {
 			break
 		} else if err != nil {
 			log.Fatal("csv reading failed")
 		}
 
-		zypperForceSingleRepo(mirror[1]+tumbleweedUrlSuffix)
+		zypperForceSingleRepo(mirror[1] + tumbleweedUrlSuffix)
 
 		// Refresh test
 		beginTime := time.Now()
 		callZypper("refresh")
 		duration := time.Since(beginTime).String()
-		fmt.Println("Refresh test: "+ mirror[0]+" duration:" + duration)
+		fmt.Println("Refresh test: " + mirror[0] + " duration:" + duration)
 
 		// installation test
 		beginTime = time.Now()
-		callZypper("install --no-recommends -y --download-only filesystem")
+		callZypper("install --no-recommends --no-confirm --download-only " + downloadAppName)
 		duration = time.Since(beginTime).String()
-		fmt.Println("Install test: "+ mirror[0]+" duration:" + duration)
+		fmt.Println("Install test: " + mirror[0] + " duration:" + duration)
 	}
 }
 
@@ -59,9 +60,9 @@ func zypperInit() {
 	callZypper("-v")
 }
 
-func callZypper (command string){
+func callZypper(command string) {
 
-	zypperCompleteCmd := zypperPrefix +command
+	zypperCompleteCmd := zypperPrefix + command
 	fmt.Println("[->] " + zypperCompleteCmd)
 	_, err := exec.Command("/bin/sh", "-c", zypperCompleteCmd).Output()
 	check(err, "Failed: "+zypperCompleteCmd)
