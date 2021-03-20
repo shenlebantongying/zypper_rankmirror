@@ -43,13 +43,14 @@ func main() {
 		beginTime := time.Now()
 		callZypper("refresh")
 		duration := time.Since(beginTime).String()
-		fmt.Println("Refresh test: " + mirror[0] + " duration:" + duration)
+		fmt.Println("[Refresh test] " + mirror[0] + " duration:" + duration)
 
 		// installation test
 		beginTime = time.Now()
 		callZypper("install --no-recommends --no-confirm --download-only " + downloadAppName)
 		duration = time.Since(beginTime).String()
-		fmt.Println("Install test: " + mirror[0] + " duration:" + duration)
+		fmt.Println("[Install test] " + mirror[0] + " duration:" + duration)
+		fmt.Println()
 	}
 }
 
